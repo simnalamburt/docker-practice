@@ -11,12 +11,22 @@ Alpine Linux 3.5.
 sudo docker build -t docker-practice .
 
 # Run image with psuedo-tty being attached to the screen
-sudo docker run -it --rm --name docker-practice docker-practice
+sudo docker run \
+    --interactive --tty \
+    --publish 12345:27017 \
+    --volume /srv/docker-practice/db:/data/db \
+    --rm --name docker-practice docker-practice
 
 # Run image as a daemon
-sudo docker run -d --rm --name docker-practice docker-practice
+sudo docker run \
+    --detach \
+    --publish 12345:27017 \
+    --volume /srv/docker-practice/db:/data/db \
+    --rm --name docker-practice docker-practice
+
 # Attach to the running docker image
 sudo docker exec -it docker-practice /bin/sh
+
 # Stop running docker container
 sudo docker stop docker-practice
 ```

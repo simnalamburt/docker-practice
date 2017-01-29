@@ -218,4 +218,5 @@ RUN apk add --no-cache mongodb \
 RUN mkdir -p /data/db
 
 VOLUME /data/db
+EXPOSE 27017 27018 27019 28017
 ENTRYPOINT ["/usr/bin/mongod"]
