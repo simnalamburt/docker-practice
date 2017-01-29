@@ -1,3 +1,4 @@
+# vim: noet sw=8
 FROM alpine:3.4
 MAINTAINER Hyeon Kim <simnalamburt@gmail.com>
 
