@@ -1,5 +1,5 @@
 # vim: noet sw=8
-FROM alpine:3.4
+FROM alpine:3.5
 MAINTAINER Hyeon Kim <simnalamburt@gmail.com>
 
 # ensure local python is preferred over distribution python
