@@ -11,27 +11,30 @@
 FROM alpine:3.5
 MAINTAINER Hyeon Kim <simnalamburt@gmail.com>
 
+
+#
+# Environment variables
+#
+ENV PYTHON2_VERSION 2.7.13
+ENV PYTHON3_VERSION 3.6.0
+ENV PYTHON2_GPG_KEY C01E1CAD5EA2C4F0B8E3571504C367C218ADD4FF
+ENV PYTHON3_GPG_KEY 0D96DF4D4110E5C43FBFB17F2D347EA6AA65421D
+ENV PYTHON_PIP_VERSION 9.0.1
+ENV SUPERVISOR_VERSION 3.3.0
+
 # ensure local python is preferred over distribution python
 ENV PATH /usr/local/bin:$PATH
-
 # http://bugs.python.org/issue19846
 # > At the moment, setting "LANG=C" on a Linux system *fundamentally breaks Python 3*, and that's not OK.
 ENV LANG C.UTF-8
-
 # install ca-certificates so that HTTPS works consistently
 # the other runtime dependencies for Python are installed later
 RUN apk add --no-cache ca-certificates
 
-# if this is called "PIP_VERSION", pip explodes with "ValueError: invalid truth value '<VERSION>'"
-ENV PYTHON_PIP_VERSION 9.0.1
-
 
 #
-# Install python 2.7.13
+# Build Python 2.7.13 manually, and install it to '/usr/local'
 #
-ENV GPG_KEY C01E1CAD5EA2C4F0B8E3571504C367C218ADD4FF
-ENV PYTHON_VERSION 2.7.13
-
 RUN set -ex \
 	&& apk add --no-cache --virtual .fetch-deps \
 		gnupg \
@@ -39,10 +42,10 @@ RUN set -ex \
 		tar \
 		xz \
 	\
-	&& wget -O python.tar.xz "https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz" \
-	&& wget -O python.tar.xz.asc "https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz.asc" \
+	&& wget -O python.tar.xz "https://www.python.org/ftp/python/${PYTHON2_VERSION%%[a-z]*}/Python-$PYTHON2_VERSION.tar.xz" \
+	&& wget -O python.tar.xz.asc "https://www.python.org/ftp/python/${PYTHON2_VERSION%%[a-z]*}/Python-$PYTHON2_VERSION.tar.xz.asc" \
 	&& export GNUPGHOME="$(mktemp -d)" \
-	&& gpg --keyserver ha.pool.sks-keyservers.net --recv-keys "$GPG_KEY" \
+	&& gpg --keyserver ha.pool.sks-keyservers.net --recv-keys "$PYTHON2_GPG_KEY" \
 	&& gpg --batch --verify python.tar.xz.asc python.tar.xz \
 	&& rm -r "$GNUPGHOME" python.tar.xz.asc \
 	&& mkdir -p /usr/src/python \
@@ -106,11 +109,8 @@ RUN set -ex \
 
 
 #
-# Install python 3.6.0
+# Build Python 3.6.0 manually, and install it to '/usr/local'
 #
-ENV GPG_KEY 0D96DF4D4110E5C43FBFB17F2D347EA6AA65421D
-ENV PYTHON_VERSION 3.6.0
-
 RUN set -ex \
 	&& apk add --no-cache --virtual .fetch-deps \
 		gnupg \
@@ -118,10 +118,10 @@ RUN set -ex \
 		tar \
 		xz \
 	\
-	&& wget -O python.tar.xz "https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz" \
-	&& wget -O python.tar.xz.asc "https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz.asc" \
+	&& wget -O python.tar.xz "https://www.python.org/ftp/python/${PYTHON3_VERSION%%[a-z]*}/Python-$PYTHON3_VERSION.tar.xz" \
+	&& wget -O python.tar.xz.asc "https://www.python.org/ftp/python/${PYTHON3_VERSION%%[a-z]*}/Python-$PYTHON3_VERSION.tar.xz.asc" \
 	&& export GNUPGHOME="$(mktemp -d)" \
-	&& gpg --keyserver ha.pool.sks-keyservers.net --recv-keys "$GPG_KEY" \
+	&& gpg --keyserver ha.pool.sks-keyservers.net --recv-keys "$PYTHON3_GPG_KEY" \
 	&& gpg --batch --verify python.tar.xz.asc python.tar.xz \
 	&& rm -r "$GNUPGHOME" python.tar.xz.asc \
 	&& mkdir -p /usr/src/python \
@@ -200,23 +200,32 @@ RUN cd /usr/local/bin \
 
 
 #
-# Prepare app environment
+# Install supervisor
 #
-#RUN mkdir -p /usr/src/app
-#WORKDIR /usr/src/app
-#COPY . /usr/src/app
-#RUN pip install --no-cache-dir -r requirements.txt
-#
-#CMD ["python3", "./main.py"]
+RUN pip2 install supervisor==$SUPERVISOR_VERSION
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 
 #
-# MongoDB
+# Install MongoDB
 #
 RUN apk add --no-cache mongodb \
 	--repository http://dl-3.alpinelinux.org/alpine/edge/testing/ --allow-untrusted
 RUN mkdir -p /data/db
 
+
+#
+# Prepare app environment
+#
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
+COPY . /usr/src/app
+RUN pip3 install --no-cache-dir -r requirements.txt
+
+
+#
+# Interface configs
+#
 VOLUME /data/db
 EXPOSE 27017 27018 27019 28017
-ENTRYPOINT ["/usr/bin/mongod"]
+ENTRYPOINT ["supervisord"]
