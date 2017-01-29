@@ -15,7 +15,7 @@ sudo docker run -it --rm --name docker-practice docker-practice
 # Run image as a daemon
 sudo docker run -d --rm --name docker-practice docker-practice
 # Attach to the running docker image
-sudo docker exec -it docker-practice /bin/bash
+sudo docker exec -it docker-practice /bin/sh
 # Stop running docker container
 sudo docker stop docker-practice
 ```
