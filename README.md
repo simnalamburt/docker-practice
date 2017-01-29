@@ -9,8 +9,13 @@ Docker image with both python 3.5 and mongodb 3.2.
 # Build image
 sudo docker build -t docker-practice .
 
-# Run image
+# Run image with psuedo-tty being attached to the screen
 sudo docker run -it --rm --name docker-practice docker-practice
+
+# Run image as a daemon
+sudo docker run -d --rm --name docker-practice docker-practice
+# Attach to the running docker image
+sudo docker exec -it docker-practice /bin/bash
 ```
 
 ### Why would you do this? Why don't you separate those two to different containers?
