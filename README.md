@@ -2,7 +2,7 @@
 
 docker-practice
 ========
-Docker image with both python 3.5 and mongodb 3.2.
+Docker image with python 2.7.13 + python 3.6.0 + mongodb 3.2.
 
 ### Instructions
 ```shell
@@ -28,7 +28,7 @@ sudo docker stop docker-practice
 - https://hub.docker.com/_/mongo/
 - https://docs.docker.com/engine/examples/mongodb/
 
-### Why would you do this? Why don't you separate those two to different containers?
+### Why would you do this? Why don't you just separate them into different containers?
 ![A picture of widowmaker from Overwatch Animated Shrot, "Alive"](http://images.akamai.steamusercontent.com/ugc/268348980135500926/EDF216DBB95088C86BD10D01B666E9BD7429D6B0/)
 
 *(laughs)*
