@@ -193,9 +193,20 @@ RUN cd /usr/local/bin \
 #
 # Prepare app environment
 #
-RUN mkdir -p /usr/src/app
-WORKDIR /usr/src/app
-COPY . /usr/src/app
-RUN pip install --no-cache-dir -r requirements.txt
+#RUN mkdir -p /usr/src/app
+#WORKDIR /usr/src/app
+#COPY . /usr/src/app
+#RUN pip install --no-cache-dir -r requirements.txt
+#
+#CMD ["python3", "./main.py"]
 
-CMD ["python3", "./main.py"]
+
+#
+# MongoDB
+#
+RUN apk add --no-cache mongodb \
+	--repository http://dl-3.alpinelinux.org/alpine/edge/testing/ --allow-untrusted
+RUN mkdir -p /data/db
+
+VOLUME /data/db
+ENTRYPOINT ["/usr/bin/mongod"]

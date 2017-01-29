@@ -26,7 +26,8 @@ sudo docker stop docker-practice
 - https://github.com/jbfink/docker-wordpress
 - http://supervisord.org/
 - https://hub.docker.com/_/python/
-- https://hub.docker.com/_/mongo/
+- https://wiki.alpinelinux.org/wiki/Alpine_Linux_package_management#Add_a_Package
+- https://pkgs.alpinelinux.org/package/edge/testing/x86_64/mongodb
 - https://docs.docker.com/engine/examples/mongodb/
 
 ### Why would you do this? Why don't you just separate them into different containers?
