@@ -2,4 +2,6 @@ import time
 
 print('I\'m going to sleep zzzZZZ')
 
-time.sleep(999999999)
+while True:
+    time.sleep(3)
+    print('zzz...')
