@@ -1,5 +1,3 @@
-> Working in Progress
-
 docker-practice
 ========
 Docker image with python 2.7.13 + python 3.6.0 + mongodb 3.2. It's based on
